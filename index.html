@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khám Phá Đặc Sản & Di Tích 3 Miền</title>
+    <style>
+        :root {
+            --primary-bg: #e0f7fa;
+            --card-bg: #ffffff;
+            --accent-color: #ff9800;
+            --north-color: #e53935;
+            --central-color: #fb8c00;
+            --south-color: #43a047;
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: linear-gradient(135deg, #e0f7fa 0%, #fff9c4 100%);
+            margin: 0;
+            padding: 15px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #00695c;
+            margin: 5px 0;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            color: #004d40;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* Controls Panel */
+        .control-panel {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .btn {
+            background-color: #0288d1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-download { background-color: #2e7d32; }
+        .btn-restart { background-color: #ed6c02; }
+
+        /* Dashboard (Timer & High Score) */
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            font-weight: bold;
+            color: #37474f;
+            font-size: 1rem;
+        }
+
+        /* Region Boxes Section */
+        .regions-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 900px;
+            margin-bottom: 20px;
+        }
+
+        .region-box {
+            background: white;
+            border-radius: 15px;
+            padding: 10px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 3px dashed #ccc;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+
+        .region-box:hover {
+            transform: scale(1.02);
+        }
+
+        .region-box.target-hover {
+            background-color: #f0f4c3;
+            border-color: #c0ca33;
+        }
+
+        .region-box[data-region="bac"] { border-color: var(--north-color); }
+        .region-box[data-region="trung"] { border-color: var(--central-color); }
+        .region-box[data-region="nam"] { border-color: var(--south-color); }
+
+        .region-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 6px 12px;
+            border-radius: 20px;
+            color: white;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .region-box[data-region="bac"] .region-title { background-color: var(--north-color); }
+        .region-box[data-region="trung"] .region-title { background-color: var(--central-color); }
+        .region-box[data-region="nam"] .region-title { background-color: var(--south-color); }
+
+        .region-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Items Section */
+        .items-pool {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: center;
+            min-height: 120px;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Card Component */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #2c3e50;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            border: 2px solid #e0e0e0;
+        }
+
+        .card .emoji {
+            font-size: 1.5rem;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .card.selected {
+            border-color: #29b6f6;
+            background-color: #e1f5fe;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(41, 182, 246, 0.5);
+        }
+
+        .card.placed {
+            cursor: default;
+            box-shadow: none;
+            border-style: solid;
+            padding: 4px 8px;
+            font-size: 0.85rem;
+        }
+        
+        .card.placed .emoji {
+            font-size: 1.1rem;
+        }
+
+        /* Animations */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        .shake {
+            animation: shake 0.4s ease-in-out;
+            border-color: #f44336 !important;
+            background-color: #ffebee !important;
+        }
+
+        /* Fireworks Container */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .regions-container {
+                grid-template-columns: 1fr;
+            }
+            .region-box {
+                min-height: 120px;
+            }
+            h1 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworks-canvas"></canvas>
+
+    <header>
+        <h1> Khám Phá Đặc Sản & Di Tích 3 Miền </h1>
+        <p class="subtitle">Em hãy chọn thẻ địa danh/đặc sản rồi bấm chọn miền tương ứng nhé!</p>
+    </header>
+
+    <div class="control-panel">
+        <button class="btn btn-restart" onclick="initGame()">🔄 Chơi Lại</button>
+        <button class="btn btn-download" onclick="downloadGame()">💾 Tải Trò Chơi Về Máy (Học Offline)</button>
+    </div>
+
+    <div class="dashboard">
+        <div>⏱️ Thời gian: <span id="timer">00:00</span></div>
+        <div>🏆 Kỷ lục: <span id="best-score">--:--</span></div>
+    </div>
+
+    <div class="regions-container">
+        <div class="region-box" data-region="bac" onclick="selectRegion('bac')">
+            <div class="region-title"> Miền Bắc</div>
+            <div class="region-items" id="region-bac"></div>
+        </div>
+        <div class="region-box" data-region="trung" onclick="selectRegion('trung')">
+            <div class="region-title"> Miền Trung</div>
+            <div class="region-items" id="region-trung"></div>
+        </div>
+        <div class="region-box" data-region="nam" onclick="selectRegion('nam')">
+            <div class="region-title"> Miền Nam</div>
+            <div class="region-items" id="region-nam"></div>
+        </div>
+    </div>
+
+    <div class="items-pool" id="items-pool"></div>
+
+    <script>
+        /* ==================== MẢNG DỮ LIỆU CÓ THỂ CHỈNH SỬA ==================== */
+        const gameData = [
+            // Miền Bắc
+            { id: 1, name: "Tháp Rùa", emoji: "🐢", region: "bac" },
+            { id: 2, name: "Phở Hà Nội", emoji: "🍜", region: "bac" },
+            { id: 3, name: "Vịnh Hạ Long", emoji: "⛵", region: "bac" },
+            { id: 4, name: "Bánh Cốm", emoji: "🌾", region: "bac" },
+            // Miền Trung
+            { id: 5, name: "Đại Nội Huế", emoji: "🏰", region: "trung" },
+            { id: 6, name: "Mì Quảng", emoji: "🍲", region: "trung" },
+            { id: 7, name: "Phố Cổ Hội An", emoji: "🏮", region: "trung" },
+            { id: 8, name: "Bún Bò Huế", emoji: "🥣", region: "trung" },
+            // Miền Nam
+            { id: 9, name: "Chợ Nổi", emoji: "🚣", region: "nam" },
+            { id: 10, name: "Cơm Tấm", emoji: "🍛", region: "nam" },
+            { id: 11, name: "Bến Nhà Rồng", emoji: "⚓", region: "nam" },
+            { id: 12, name: "Bánh Xèo", emoji: "🌮", region: "nam" }
+        ];
+
+        /* ==================== BIẾN TRẠNG THÁI GAME ==================== */
+        let selectedCard = null;
+        let correctCount = 0;
+        let timerInterval = null;
+        let secondsElapsed = 0;
+        let isGameActive = false;
+
+        /* ==================== ÂM THANH (WEB AUDIO API) ==================== */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                osc.frequency.exponentialRampToValueAtTime(659.25, audioCtx.currentTime + 0.15); // E5
+                osc.frequency.exponentialRampToValueAtTime(783.99, audioCtx.currentTime + 0.3); // G5
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+                osc.frequency.setValueAtTime(164.81, audioCtx.currentTime + 0.15); // E3
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'win') {
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.connect(noteGain);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                    noteGain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                    noteGain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.3);
+                    noteOsc.start(audioCtx.currentTime + idx * 0.1);
+                    noteOsc.stop(audioCtx.currentTime + idx * 0.1 + 0.3);
+                });
+            }
+        }
+
+        /* ==================== KHỞI TẠO VÀ ĐIỀU KHIỂN GAME ==================== */
+        function initGame() {
+            // Reset trạng thái
+            selectedCard = null;
+            correctCount = 0;
+            secondsElapsed = 0;
+            isGameActive = false;
+            clearInterval(timerInterval);
+            document.getElementById('timer').innerText = "00:00";
+
+            // Xóa nội dung các container
+            document.getElementById('items-pool').innerHTML = '';
+            document.getElementById('region-bac').innerHTML = '';
+            document.getElementById('region-trung').innerHTML = '';
+            document.getElementById('region-nam').innerHTML = '';
+
+            // Lấy kỷ lục từ LocalStorage
+            loadBestScore();
+
+            // Xáo trộn và hiển thị thẻ
+            const shuffledItems = [...gameData].sort(() => Math.random() - 0.5);
+            shuffledItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.id = item.id;
+                card.dataset.region = item.region;
+                card.innerHTML = `<span class="emoji">${item.emoji}</span><span>${item.name}</span>`;
+                card.onclick = (e) => {
+                    e.stopPropagation();
+                    selectCard(card);
+                };
+                document.getElementById('items-pool').appendChild(card);
+            });
+        }
+
+        function startTimer() {
+            if (!isGameActive) {
+                isGameActive = true;
+                timerInterval = setInterval(() => {
+                    secondsElapsed++;
+                    document.getElementById('timer').innerText = formatTime(secondsElapsed);
+                }, 1000);
+            }
+        }
+
+        function formatTime(totalSeconds) {
+            const mins = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+            const secs = (totalSeconds % 60).toString().padStart(2, '0');
+            return `${mins}:${secs}`;
+        }
+
+        function selectCard(cardElement) {
+            startTimer();
+            if (cardElement.classList.contains('placed')) return;
+
+            if (selectedCard) {
+                selectedCard.classList.remove('selected');
+            }
+            
+            if (selectedCard === cardElement) {
+                selectedCard = null;
+            } else {
+                selectedCard = cardElement;
+                selectedCard.classList.add('selected');
+            }
+        }
+
+        function selectRegion(regionKey) {
+            if (!selectedCard) return;
+
+            const targetBox = document.querySelector(`.region-box[data-region="${regionKey}"]`);
+            
+            if (selectedCard.dataset.region === regionKey) {
+                // ĐÚNG MIỀN
+                playSound('correct');
+                selectedCard.classList.remove('selected');
+                selectedCard.classList.add('placed');
+                selectedCard.onclick = null; // Tắt sự kiện click
+                
+                // Di chuyển thẻ vào hộp tương ứng
+                document.getElementById(`region-${regionKey}`).appendChild(selectedCard);
+                selectedCard = null;
+                correctCount++;
+
+                // Kiểm tra hoàn thành trò chơi
+                if (correctCount === gameData.length) {
+                    handleWin();
+                }
+            } else {
+                // SAI MIỀN
+                playSound('wrong');
+                selectedCard.classList.add('shake');
+                const tempCard = selectedCard;
+                setTimeout(() => {
+                    tempCard.classList.remove('shake');
+                }, 400);
+            }
+        }
+
+        /* ==================== XỬ LÝ THẮNG VÀ HIỆU ỨNG ==================== */
+        function handleWin() {
+            clearInterval(timerInterval);
+            playSound('win');
+            triggerFireworks();
+            saveBestScore(secondsElapsed);
+
+            setTimeout(() => {
+                alert(`🎉 CHÚC MỪNG EM!\nEm đã hoàn thành xuất sắc bài học trong thời gian: ${formatTime(secondsElapsed)}!`);
+            }, 500);
+        }
+
+        function saveBestScore(score) {
+            const currentBest = localStorage.getItem('diali_best_score');
+            if (!currentBest || score < parseInt(currentBest)) {
+                localStorage.setItem('diali_best_score', score);
+                loadBestScore();
+            }
+        }
+
+        function loadBestScore() {
+            const best = localStorage.getItem('diali_best_score');
+            if (best) {
+                document.getElementById('best-score').innerText = formatTime(parseInt(best));
+            } else {
+                document.getElementById('best-score').innerText = "--:--";
+            }
+        }
+
+        /* ==================== PHÁO HOA CSS/CANVAS ==================== */
+        function triggerFireworks() {
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const colors = ['#ff1744', '#f50057', '#d500f9', '#651fff', '#3d5afe', '#29b6f6', '#00e676', '#ffea00', '#ff9100'];
+
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    dx: (Math.random() - 0.5) * 12,
+                    dy: (Math.random() - 0.5) * 12,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    radius: Math.random() * 4 + 2,
+                    life: 100
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, index) => {
+                    if (p.life > 0) {
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = p.color;
+                        ctx.fill();
+                        p.x += p.dx;
+                        p.y += p.dy;
+                        p.dy += 0.05; // Trọng lực
+                        p.life--;
+                    }
+                });
+
+                particles = particles.filter(p => p.life > 0);
+                if (particles.length > 0) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        /* ==================== TẢI FILE TỰ ĐỘNG ==================== */
+        function downloadGame() {
+            const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'DiaLy_TieuHoc_Offline.html';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(a.href);
+        }
+
+        // Chạy khởi tạo khi tải xong trang
+        window.onload = initGame;
+    </script>
+</body>
+</html>
